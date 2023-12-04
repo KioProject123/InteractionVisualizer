@@ -48,54 +48,6 @@ public abstract class NMS {
                 case V1_20_2:
                     instance = new V1_20_2();
                     break;
-                case V1_20:
-                    instance = new V1_20();
-                    break;
-                case V1_19_4:
-                    instance = new V1_19_4();
-                    break;
-                case V1_19_3:
-                    instance = new V1_19_3();
-                    break;
-                case V1_19:
-                    instance = new V1_19();
-                    break;
-                case V1_18_2:
-                    instance = new V1_18_2();
-                    break;
-                case V1_18:
-                    instance = new V1_18();
-                    break;
-                case V1_17:
-                    instance = new V1_17();
-                    break;
-                case V1_16_4:
-                    instance = new V1_16_4();
-                    break;
-                case V1_16_2:
-                    instance = new V1_16_2();
-                    break;
-                case V1_16:
-                    instance = new V1_16();
-                    break;
-                case V1_15:
-                    instance = new V1_15();
-                    break;
-                case V1_14:
-                    instance = new V1_14();
-                    break;
-                case V1_13_1:
-                    instance = new V1_13_1();
-                    break;
-                case V1_13:
-                    instance = new V1_13();
-                    break;
-                case V1_12:
-                    instance = new V1_12();
-                    break;
-                case V1_11:
-                    instance = new V1_11();
-                    break;
                 default:
                     break;
             }

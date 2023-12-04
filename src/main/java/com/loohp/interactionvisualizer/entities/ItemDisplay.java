@@ -141,32 +141,6 @@ public class ItemDisplay extends VisualizerRunnableDisplay implements Listener {
         return KEY;
     }
 
-    @Override
-    public int gc() {
-        return -1;
-    }
-
-    @Override
-    public int run() {
-        return new BukkitRunnable() {
-            int i = 0;
-
-            @Override
-            public void run() {
-                if (--i > 0) {
-                    return;
-                }
-                i = updateRate;
-                for (World world : Bukkit.getWorlds()) {
-                    WrappedIterable<?, Entity> entities = NMS.getInstance().getEntities(world);
-                    for (Entity entity : entities) {
-                        SyncUtils.runAsyncWithSyncCondition(() -> entity.isValid() && entity instanceof Item, 200, () -> tick((Item) entity, entities));
-                    }
-                }
-            }
-        }.runTaskTimer(InteractionVisualizer.plugin, 0, 1).getTaskId();
-    }
-
     private void tick(Item item, WrappedIterable<?, Entity> items) {
         World world = item.getWorld();
         Location location = item.getLocation();

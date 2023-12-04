@@ -1,4 +1,4 @@
-name: InteractionVisualizer
+name: InteractionVisualizer-KioCG
 author: loohp
 version: ${project.version}
 main: com.loohp.interactionvisualizer.InteractionVisualizer

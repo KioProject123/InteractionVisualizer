@@ -36,15 +36,11 @@ import com.loohp.interactionvisualizer.managers.PacketManager;
 import com.loohp.interactionvisualizer.managers.PreferenceManager;
 import com.loohp.interactionvisualizer.managers.TaskManager;
 import com.loohp.interactionvisualizer.managers.TileEntityManager;
-import com.loohp.interactionvisualizer.metrics.Charts;
-import com.loohp.interactionvisualizer.metrics.Metrics;
 import com.loohp.interactionvisualizer.nms.NMS;
 import com.loohp.interactionvisualizer.objectholders.EntryKey;
 import com.loohp.interactionvisualizer.objectholders.ILightManager;
 import com.loohp.interactionvisualizer.placeholderAPI.Placeholders;
 import com.loohp.interactionvisualizer.protocol.WatchableCollection;
-import com.loohp.interactionvisualizer.updater.Updater;
-import com.loohp.interactionvisualizer.updater.Updater.UpdaterResponse;
 import com.loohp.interactionvisualizer.utils.LanguageUtils;
 import com.loohp.interactionvisualizer.utils.MCVersion;
 import com.loohp.interactionvisualizer.utils.PotionUtils;
@@ -166,7 +162,7 @@ public class InteractionVisualizer extends JavaPlugin {
 
         protocolManager = ProtocolLibrary.getProtocolManager();
 
-        Metrics metrics = new Metrics(this, BSTATS_PLUGIN_ID);
+//        Metrics metrics = new Metrics(this, BSTATS_PLUGIN_ID);
 
         exactMinecraftVersion = Bukkit.getVersion().substring(Bukkit.getVersion().indexOf("(") + 5, Bukkit.getVersion().indexOf(")"));
         version = MCVersion.fromPackageName(getServer().getClass().getPackage().getName());
@@ -266,7 +262,7 @@ public class InteractionVisualizer extends JavaPlugin {
 
         TaskManager.run();
 
-        Charts.registerCharts(metrics);
+//        Charts.registerCharts(metrics);
 
         if (isPluginEnabled("PlaceholderAPI")) {
             new Placeholders().register();
@@ -296,19 +292,19 @@ public class InteractionVisualizer extends JavaPlugin {
             }
         });
 
-        InteractionVisualizer.asyncExecutorManager.runTaskLaterAsynchronously(() -> {
-            if (updaterEnabled) {
-                UpdaterResponse version = Updater.checkUpdate();
-                if (!version.getResult().equals("latest")) {
-                    Updater.sendUpdateMessage(Bukkit.getConsoleSender(), version.getResult(), version.getSpigotPluginId());
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (player.hasPermission("interactionvisualizer.update")) {
-                            Updater.sendUpdateMessage(player, version.getResult(), version.getSpigotPluginId());
-                        }
-                    }
-                }
-            }
-        }, 100);
+//        InteractionVisualizer.asyncExecutorManager.runTaskLaterAsynchronously(() -> {
+//            if (updaterEnabled) {
+//                UpdaterResponse version = Updater.checkUpdate();
+//                if (!version.getResult().equals("latest")) {
+//                    Updater.sendUpdateMessage(Bukkit.getConsoleSender(), version.getResult(), version.getSpigotPluginId());
+//                    for (Player player : Bukkit.getOnlinePlayers()) {
+//                        if (player.hasPermission("interactionvisualizer.update")) {
+//                            Updater.sendUpdateMessage(player, version.getResult(), version.getSpigotPluginId());
+//                        }
+//                    }
+//                }
+//            }
+//        }, 100);
 		/*
 		protocolManager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.MONITOR, PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
 		    @Override

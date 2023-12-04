@@ -24,17 +24,11 @@ import com.loohp.interactionvisualizer.InteractionVisualizer;
 import com.loohp.interactionvisualizer.api.VisualizerInteractDisplay;
 import com.loohp.interactionvisualizer.api.VisualizerRunnableDisplay;
 import com.loohp.interactionvisualizer.blocks.AnvilDisplay;
-import com.loohp.interactionvisualizer.blocks.BannerDisplay;
 import com.loohp.interactionvisualizer.blocks.BarrelDisplay;
-import com.loohp.interactionvisualizer.blocks.BeaconDisplay;
-import com.loohp.interactionvisualizer.blocks.BeeHiveDisplay;
-import com.loohp.interactionvisualizer.blocks.BeeNestDisplay;
 import com.loohp.interactionvisualizer.blocks.BlastFurnaceDisplay;
 import com.loohp.interactionvisualizer.blocks.BrewingStandDisplay;
-import com.loohp.interactionvisualizer.blocks.CampfireDisplay;
 import com.loohp.interactionvisualizer.blocks.CartographyTableDisplay;
 import com.loohp.interactionvisualizer.blocks.ChestDisplay;
-import com.loohp.interactionvisualizer.blocks.ConduitDisplay;
 import com.loohp.interactionvisualizer.blocks.CraftingTableDisplay;
 import com.loohp.interactionvisualizer.blocks.DispenserDisplay;
 import com.loohp.interactionvisualizer.blocks.DoubleChestDisplay;
@@ -44,22 +38,16 @@ import com.loohp.interactionvisualizer.blocks.EnderchestDisplay;
 import com.loohp.interactionvisualizer.blocks.FurnaceDisplay;
 import com.loohp.interactionvisualizer.blocks.GrindstoneDisplay;
 import com.loohp.interactionvisualizer.blocks.HopperDisplay;
-import com.loohp.interactionvisualizer.blocks.JukeBoxDisplay;
-import com.loohp.interactionvisualizer.blocks.LecternDisplay;
 import com.loohp.interactionvisualizer.blocks.LoomDisplay;
 import com.loohp.interactionvisualizer.blocks.NoteBlockDisplay;
 import com.loohp.interactionvisualizer.blocks.ShulkerBoxDisplay;
 import com.loohp.interactionvisualizer.blocks.SmithingTableDisplay;
 import com.loohp.interactionvisualizer.blocks.SmokerDisplay;
-import com.loohp.interactionvisualizer.blocks.SoulCampfireDisplay;
-import com.loohp.interactionvisualizer.blocks.SpawnerDisplay;
 import com.loohp.interactionvisualizer.blocks.StonecutterDisplay;
-import com.loohp.interactionvisualizer.debug.Debug;
 import com.loohp.interactionvisualizer.entities.ItemDisplay;
 import com.loohp.interactionvisualizer.entities.VillagerDisplay;
 import com.loohp.interactionvisualizer.listeners.ChunkEvents;
 import com.loohp.interactionvisualizer.objectholders.EntryKey;
-import com.loohp.interactionvisualizer.updater.Updater;
 import com.loohp.interactionvisualizer.utils.MCVersion;
 import com.loohp.yamlconfiguration.YamlConfiguration;
 import org.bukkit.Bukkit;
@@ -166,8 +154,8 @@ public class TaskManager {
 
         List<EntryKey> keys = new ArrayList<>();
 
-        Bukkit.getPluginManager().registerEvents(new Debug(), plugin);
-        Bukkit.getPluginManager().registerEvents(new Updater(), plugin);
+//        Bukkit.getPluginManager().registerEvents(new Debug(), plugin);
+//        Bukkit.getPluginManager().registerEvents(new Updater(), plugin);
         Bukkit.getPluginManager().registerEvents(new com.loohp.interactionvisualizer.listeners.Events(), plugin);
         Bukkit.getPluginManager().registerEvents(new PacketManager(), plugin);
         if (version.isLegacy()) {
@@ -306,12 +294,12 @@ public class TaskManager {
             hopper = true;
         }
 
-        if (getConfig().getBoolean("Blocks.Beacon.Enabled")) {
-            BeaconDisplay bd = new BeaconDisplay();
-            keys.add(bd.registerNative());
-            Bukkit.getPluginManager().registerEvents(bd, plugin);
-            beacon = true;
-        }
+//        if (getConfig().getBoolean("Blocks.Beacon.Enabled")) {
+//            BeaconDisplay bd = new BeaconDisplay();
+//            keys.add(bd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(bd, plugin);
+//            beacon = true;
+//        }
 
         if (getConfig().getBoolean("Blocks.NoteBlock.Enabled")) {
             NoteBlockDisplay nbd = new NoteBlockDisplay();
@@ -320,12 +308,12 @@ public class TaskManager {
             noteblock = true;
         }
 
-        if (getConfig().getBoolean("Blocks.JukeBox.Enabled")) {
-            JukeBoxDisplay jbd = new JukeBoxDisplay();
-            keys.add(jbd.registerNative());
-            Bukkit.getPluginManager().registerEvents(jbd, plugin);
-            jukebox = true;
-        }
+//        if (getConfig().getBoolean("Blocks.JukeBox.Enabled")) {
+//            JukeBoxDisplay jbd = new JukeBoxDisplay();
+//            keys.add(jbd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(jbd, plugin);
+//            jukebox = true;
+//        }
 
         if (getConfig().getBoolean("Blocks.SmithingTable.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_16)) {
             SmithingTableDisplay std = new SmithingTableDisplay();
@@ -338,61 +326,61 @@ public class TaskManager {
             smithingtable = true;
         }
 
-        if (getConfig().getBoolean("Blocks.BeeNest.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_15)) {
-            BeeNestDisplay bnd = new BeeNestDisplay();
-            keys.add(bnd.registerNative());
-            Bukkit.getPluginManager().registerEvents(bnd, plugin);
-            beenest = true;
-        }
+//        if (getConfig().getBoolean("Blocks.BeeNest.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_15)) {
+//            BeeNestDisplay bnd = new BeeNestDisplay();
+//            keys.add(bnd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(bnd, plugin);
+//            beenest = true;
+//        }
 
-        if (getConfig().getBoolean("Blocks.BeeHive.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_15)) {
-            BeeHiveDisplay bhd = new BeeHiveDisplay();
-            keys.add(bhd.registerNative());
-            Bukkit.getPluginManager().registerEvents(bhd, plugin);
-            beehive = true;
-        }
+//        if (getConfig().getBoolean("Blocks.BeeHive.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_15)) {
+//            BeeHiveDisplay bhd = new BeeHiveDisplay();
+//            keys.add(bhd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(bhd, plugin);
+//            beehive = true;
+//        }
 
-        if (getConfig().getBoolean("Blocks.Lectern.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_14)) {
-            LecternDisplay ld = new LecternDisplay();
-            keys.add(ld.registerNative());
-            Bukkit.getPluginManager().registerEvents(ld, plugin);
-            lectern = true;
-        }
+//        if (getConfig().getBoolean("Blocks.Lectern.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_14)) {
+//            LecternDisplay ld = new LecternDisplay();
+//            keys.add(ld.registerNative());
+//            Bukkit.getPluginManager().registerEvents(ld, plugin);
+//            lectern = true;
+//        }
 
-        if (getConfig().getBoolean("Blocks.Campfire.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_14)) {
-            CampfireDisplay cd = new CampfireDisplay();
-            keys.add(cd.registerNative());
-            Bukkit.getPluginManager().registerEvents(cd, plugin);
-            campfire = true;
-        }
+//        if (getConfig().getBoolean("Blocks.Campfire.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_14)) {
+//            CampfireDisplay cd = new CampfireDisplay();
+//            keys.add(cd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(cd, plugin);
+//            campfire = true;
+//        }
 
-        if (getConfig().getBoolean("Blocks.SoulCampfire.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_16)) {
-            SoulCampfireDisplay scd = new SoulCampfireDisplay();
-            keys.add(scd.registerNative());
-            Bukkit.getPluginManager().registerEvents(scd, plugin);
-            soulcampfire = true;
-        }
+//        if (getConfig().getBoolean("Blocks.SoulCampfire.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_16)) {
+//            SoulCampfireDisplay scd = new SoulCampfireDisplay();
+//            keys.add(scd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(scd, plugin);
+//            soulcampfire = true;
+//        }
 
-        if (getConfig().getBoolean("Blocks.Spawner.Enabled")) {
-            SpawnerDisplay sd = new SpawnerDisplay();
-            keys.add(sd.registerNative());
-            Bukkit.getPluginManager().registerEvents(sd, plugin);
-            spawner = true;
-        }
+//        if (getConfig().getBoolean("Blocks.Spawner.Enabled")) {
+//            SpawnerDisplay sd = new SpawnerDisplay();
+//            keys.add(sd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(sd, plugin);
+//            spawner = true;
+//        }
 
-        if (getConfig().getBoolean("Blocks.Conduit.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_13)) {
-            ConduitDisplay cd = new ConduitDisplay();
-            keys.add(cd.registerNative());
-            Bukkit.getPluginManager().registerEvents(cd, plugin);
-            conduit = true;
-        }
+//        if (getConfig().getBoolean("Blocks.Conduit.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_13)) {
+//            ConduitDisplay cd = new ConduitDisplay();
+//            keys.add(cd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(cd, plugin);
+//            conduit = true;
+//        }
 
-        if (getConfig().getBoolean("Blocks.Banner.Enabled")) {
-            BannerDisplay bd = new BannerDisplay();
-            keys.add(bd.registerNative());
-            Bukkit.getPluginManager().registerEvents(bd, plugin);
-            banner = true;
-        }
+//        if (getConfig().getBoolean("Blocks.Banner.Enabled")) {
+//            BannerDisplay bd = new BannerDisplay();
+//            keys.add(bd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(bd, plugin);
+//            banner = true;
+//        }
 
         if (getConfig().getBoolean("Blocks.Barrel.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_14)) {
             BarrelDisplay bd = new BarrelDisplay();

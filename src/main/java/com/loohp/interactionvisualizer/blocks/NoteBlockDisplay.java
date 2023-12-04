@@ -68,28 +68,6 @@ public class NoteBlockDisplay extends VisualizerRunnableDisplay implements Liste
         return KEY;
     }
 
-    @Override
-    public int gc() {
-        return -1;
-    }
-
-    @Override
-    public int run() {
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(InteractionVisualizer.plugin, () -> {
-            Iterator<Entry<Block, ConcurrentHashMap<String, Object>>> itr = displayingNotes.entrySet().iterator();
-            while (itr.hasNext()) {
-                Entry<Block, ConcurrentHashMap<String, Object>> entry = itr.next();
-                long unix = System.currentTimeMillis();
-                long timeout = (long) entry.getValue().get("Timeout");
-                if (unix > timeout) {
-                    ArmorStand stand = (ArmorStand) entry.getValue().get("Stand");
-                    Bukkit.getScheduler().runTask(InteractionVisualizer.plugin, () -> PacketManager.removeArmorStand(InteractionVisualizerAPI.getPlayers(), stand));
-                    itr.remove();
-                }
-            }
-        }, 0, 20).getTaskId();
-    }
-
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR)
     public void onUseNoteBlock(PlayerInteractEvent event) {
@@ -148,13 +126,13 @@ public class NoteBlockDisplay extends VisualizerRunnableDisplay implements Liste
                 text = state.getNote().getOctave() == 0 ? text : text + " ^";
                 component = LegacyComponentSerializer.legacySection().deserialize(text);
             } else {
-                org.bukkit.block.NoteBlock state = (org.bukkit.block.NoteBlock) block.getState();
-                Tone tone = state.getNote().getTone();
-                String inst = MusicManager.getMusicConfig().getString("Instruments." + LegacyInstrumentUtils.getInstrumentNameFromLegacy(block.getRelative(BlockFace.DOWN).getType().toString().toUpperCase()));
-                String text = ChatColor.GOLD + inst + " " + getColor(tone) + tone.toString().toUpperCase();
-                text = state.getNote().isSharped() ? text + "#" : text;
-                text = state.getNote().getOctave() == 0 ? text : text + " ^";
-                component = LegacyComponentSerializer.legacySection().deserialize(text);
+//                org.bukkit.block.NoteBlock state = (org.bukkit.block.NoteBlock) block.getState();
+//                Tone tone = state.getNote().getTone();
+//                String inst = MusicManager.getMusicConfig().getString("Instruments." + LegacyInstrumentUtils.getInstrumentNameFromLegacy(block.getRelative(BlockFace.DOWN).getType().toString().toUpperCase()));
+//                String text = ChatColor.GOLD + inst + " " + getColor(tone) + tone.toString().toUpperCase();
+//                text = state.getNote().isSharped() ? text + "#" : text;
+//                text = state.getNote().getOctave() == 0 ? text : text + " ^";
+                component = LegacyComponentSerializer.legacySection().deserialize("text");
             }
 
             stand.setCustomName(component);

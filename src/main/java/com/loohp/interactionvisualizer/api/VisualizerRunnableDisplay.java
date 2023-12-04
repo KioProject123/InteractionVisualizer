@@ -40,12 +40,16 @@ public abstract class VisualizerRunnableDisplay implements VisualizerDisplay {
     /**
      * This method is used for cleaning up, return the task id, return -1 to disable
      */
-    public abstract int gc();
+    public int gc() {
+        throw new UnsupportedOperationException("Removed due to optimization");
+    }
 
     /**
      * This method is used for a runnable, return the task id, return -1 to disable
      */
-    public abstract int run();
+    public int run() {
+        throw new UnsupportedOperationException("Removed due to optimization");
+    }
 
     /**
      * Register this custom display to InteractionVisualizer.
