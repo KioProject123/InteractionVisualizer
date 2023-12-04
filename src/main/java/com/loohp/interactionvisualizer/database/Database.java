@@ -115,7 +115,7 @@ public class Database {
     private static void sqliteSetup(boolean echo) {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:plugins/InteractionVisualizer/database.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:plugins/InteractionVisualizer-KioCG/database.db");
             if (echo) {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[InteractionVisualizer] Opened Sqlite database successfully");
             }

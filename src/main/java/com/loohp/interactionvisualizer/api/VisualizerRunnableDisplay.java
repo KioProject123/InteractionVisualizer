@@ -73,16 +73,16 @@ public abstract class VisualizerRunnableDisplay implements VisualizerDisplay {
 
     @Deprecated
     public final EntryKey registerNative() {
-        TaskManager.runnables.add(this);
-        this.tasks = new HashSet<>();
-        int gc = gc();
-        if (gc >= 0) {
-            this.tasks.add(gc);
-        }
-        int run = run();
-        if (run >= 0) {
-            this.tasks.add(run);
-        }
+//        TaskManager.runnables.add(this);
+//        this.tasks = new HashSet<>();
+//        int gc = gc();
+//        if (gc >= 0) {
+//            this.tasks.add(gc);
+//        }
+//        int run = run();
+//        if (run >= 0) {
+//            this.tasks.add(run);
+//        }
         return key();
     }
 
