@@ -25,8 +25,6 @@ import com.loohp.interactionvisualizer.managers.MaterialManager;
 import com.loohp.interactionvisualizer.managers.MusicManager;
 import com.loohp.interactionvisualizer.managers.PacketManager;
 import com.loohp.interactionvisualizer.objectholders.EntryKey;
-import com.loohp.interactionvisualizer.updater.Updater;
-import com.loohp.interactionvisualizer.updater.Updater.UpdaterResponse;
 import com.loohp.interactionvisualizer.utils.ChatColorUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -90,18 +88,18 @@ public class Commands implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("interactionvisualizer.update")) {
                 sender.sendMessage(ChatColor.AQUA + "[InteractionVisualizer] InteractionVisualizer written by LOOHP!");
                 sender.sendMessage(ChatColor.GOLD + "[InteractionVisualizer] You are running InteractionVisualizer version: " + plugin.getDescription().getVersion());
-                InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
-                    UpdaterResponse version = Updater.checkUpdate();
-                    if (version.getResult().equals("latest")) {
-                        if (version.isDevBuildLatest()) {
-                            sender.sendMessage(ChatColor.GREEN + "[InteractionVisualizer] You are running the latest version!");
-                        } else {
-                            Updater.sendUpdateMessage(sender, version.getResult(), version.getSpigotPluginId(), true);
-                        }
-                    } else {
-                        Updater.sendUpdateMessage(sender, version.getResult(), version.getSpigotPluginId());
-                    }
-                });
+//                InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
+//                    UpdaterResponse version = Updater.checkUpdate();
+//                    if (version.getResult().equals("latest")) {
+//                        if (version.isDevBuildLatest()) {
+//                            sender.sendMessage(ChatColor.GREEN + "[InteractionVisualizer] You are running the latest version!");
+//                        } else {
+//                            Updater.sendUpdateMessage(sender, version.getResult(), version.getSpigotPluginId(), true);
+//                        }
+//                    } else {
+//                        Updater.sendUpdateMessage(sender, version.getResult(), version.getSpigotPluginId());
+//                    }
+//                });
             } else {
                 sender.sendMessage(ChatColorUtils.translateAlternateColorCodes('&', plugin.getConfiguration().getString("Messages.NoPermission")));
             }
