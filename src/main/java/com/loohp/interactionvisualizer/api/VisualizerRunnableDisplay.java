@@ -40,16 +40,12 @@ public abstract class VisualizerRunnableDisplay implements VisualizerDisplay {
     /**
      * This method is used for cleaning up, return the task id, return -1 to disable
      */
-    public int gc() {
-        throw new UnsupportedOperationException("Removed due to optimization");
-    }
+    public abstract int gc();
 
     /**
      * This method is used for a runnable, return the task id, return -1 to disable
      */
-    public int run() {
-        throw new UnsupportedOperationException("Removed due to optimization");
-    }
+    public abstract int run();
 
     /**
      * Register this custom display to InteractionVisualizer.
@@ -73,16 +69,16 @@ public abstract class VisualizerRunnableDisplay implements VisualizerDisplay {
 
     @Deprecated
     public final EntryKey registerNative() {
-//        TaskManager.runnables.add(this);
-//        this.tasks = new HashSet<>();
-//        int gc = gc();
-//        if (gc >= 0) {
-//            this.tasks.add(gc);
-//        }
-//        int run = run();
-//        if (run >= 0) {
-//            this.tasks.add(run);
-//        }
+        TaskManager.runnables.add(this);
+        this.tasks = new HashSet<>();
+        int gc = gc();
+        if (gc >= 0) {
+            this.tasks.add(gc);
+        }
+        int run = run();
+        if (run >= 0) {
+            this.tasks.add(run);
+        }
         return key();
     }
 

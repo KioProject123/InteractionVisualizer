@@ -68,6 +68,28 @@ public class NoteBlockDisplay extends VisualizerRunnableDisplay implements Liste
         return KEY;
     }
 
+    @Override
+    public int gc() {
+        return -1;
+    }
+
+    @Override
+    public int run() {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(InteractionVisualizer.plugin, () -> {
+            Iterator<Entry<Block, ConcurrentHashMap<String, Object>>> itr = displayingNotes.entrySet().iterator();
+            while (itr.hasNext()) {
+                Entry<Block, ConcurrentHashMap<String, Object>> entry = itr.next();
+                long unix = System.currentTimeMillis();
+                long timeout = (long) entry.getValue().get("Timeout");
+                if (unix > timeout) {
+                    ArmorStand stand = (ArmorStand) entry.getValue().get("Stand");
+                    Bukkit.getScheduler().runTask(InteractionVisualizer.plugin, () -> PacketManager.removeArmorStand(InteractionVisualizerAPI.getPlayers(), stand));
+                    itr.remove();
+                }
+            }
+        }, 0, 20).getTaskId();
+    }
+
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR)
     public void onUseNoteBlock(PlayerInteractEvent event) {
