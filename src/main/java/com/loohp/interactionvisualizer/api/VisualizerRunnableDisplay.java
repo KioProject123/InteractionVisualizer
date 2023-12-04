@@ -40,12 +40,16 @@ public abstract class VisualizerRunnableDisplay implements VisualizerDisplay {
     /**
      * This method is used for cleaning up, return the task id, return -1 to disable
      */
-    public abstract int gc();
+    public int gc() {
+        return -1;
+    }
 
     /**
      * This method is used for a runnable, return the task id, return -1 to disable
      */
-    public abstract int run();
+    public int run() {
+        return -1;
+    }
 
     /**
      * Register this custom display to InteractionVisualizer.
