@@ -38,8 +38,8 @@ import com.loohp.interactionvisualizer.blocks.EnderchestDisplay;
 import com.loohp.interactionvisualizer.blocks.FurnaceDisplay;
 import com.loohp.interactionvisualizer.blocks.GrindstoneDisplay;
 import com.loohp.interactionvisualizer.blocks.HopperDisplay;
+import com.loohp.interactionvisualizer.blocks.JukeBoxDisplay;
 import com.loohp.interactionvisualizer.blocks.LoomDisplay;
-import com.loohp.interactionvisualizer.blocks.NoteBlockDisplay;
 import com.loohp.interactionvisualizer.blocks.ShulkerBoxDisplay;
 import com.loohp.interactionvisualizer.blocks.SmithingTableDisplay;
 import com.loohp.interactionvisualizer.blocks.SmokerDisplay;
@@ -301,19 +301,19 @@ public class TaskManager {
 //            beacon = true;
 //        }
 
-        if (getConfig().getBoolean("Blocks.NoteBlock.Enabled")) {
-            NoteBlockDisplay nbd = new NoteBlockDisplay();
-            keys.add(nbd.registerNative());
-            Bukkit.getPluginManager().registerEvents(nbd, plugin);
-            noteblock = true;
-        }
-
-//        if (getConfig().getBoolean("Blocks.JukeBox.Enabled")) {
-//            JukeBoxDisplay jbd = new JukeBoxDisplay();
-//            keys.add(jbd.registerNative());
-//            Bukkit.getPluginManager().registerEvents(jbd, plugin);
-//            jukebox = true;
+//        if (getConfig().getBoolean("Blocks.NoteBlock.Enabled")) {
+//            NoteBlockDisplay nbd = new NoteBlockDisplay();
+//            keys.add(nbd.registerNative());
+//            Bukkit.getPluginManager().registerEvents(nbd, plugin);
+//            noteblock = true;
 //        }
+
+        if (getConfig().getBoolean("Blocks.JukeBox.Enabled")) {
+            JukeBoxDisplay jbd = new JukeBoxDisplay();
+            keys.add(jbd.registerNative());
+            Bukkit.getPluginManager().registerEvents(jbd, plugin);
+            jukebox = true;
+        }
 
         if (getConfig().getBoolean("Blocks.SmithingTable.Enabled") && version.isNewerOrEqualTo(MCVersion.V1_16)) {
             SmithingTableDisplay std = new SmithingTableDisplay();

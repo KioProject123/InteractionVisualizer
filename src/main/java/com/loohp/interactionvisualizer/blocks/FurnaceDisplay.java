@@ -103,6 +103,134 @@ public class FurnaceDisplay extends VisualizerRunnableDisplay implements Listene
         return KEY;
     }
 
+    @Override
+    public int gc() {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(InteractionVisualizer.plugin, () -> {
+            Iterator<Entry<Block, Map<String, Object>>> itr = furnaceMap.entrySet().iterator();
+            int count = 0;
+            int maxper = (int) Math.ceil((double) furnaceMap.size() / (double) gcPeriod);
+            int delay = 1;
+            while (itr.hasNext()) {
+                count++;
+                if (count > maxper) {
+                    count = 0;
+                    delay++;
+                }
+                Entry<Block, Map<String, Object>> entry = itr.next();
+                Bukkit.getScheduler().runTaskLater(InteractionVisualizer.plugin, () -> {
+                    Block block = entry.getKey();
+                    if (!isActive(block.getLocation())) {
+                        Map<String, Object> map = entry.getValue();
+                        if (map.get("Item") instanceof Item) {
+                            Item item = (Item) map.get("Item");
+                            PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
+                        }
+                        furnaceMap.remove(block);
+                        return;
+                    }
+                    if (!isFurnace(block.getType())) {
+                        Map<String, Object> map = entry.getValue();
+                        if (map.get("Item") instanceof Item) {
+                            Item item = (Item) map.get("Item");
+                            PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
+                        }
+                        furnaceMap.remove(block);
+                        return;
+                    }
+                }, delay);
+            }
+        }, 0, gcPeriod).getTaskId();
+    }
+
+    @Override
+    public int run() {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(InteractionVisualizer.plugin, () -> {
+            Bukkit.getScheduler().runTask(InteractionVisualizer.plugin, () -> {
+                Set<Block> list = nearbyFurnace();
+                for (Block block : list) {
+                    if (furnaceMap.get(block) == null && isActive(block.getLocation())) {
+                        if (isFurnace(block.getType())) {
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("Item", "N/A");
+                            furnaceMap.put(block, map);
+                        }
+                    }
+                }
+            });
+
+            Iterator<Entry<Block, Map<String, Object>>> itr = furnaceMap.entrySet().iterator();
+            int count = 0;
+            int maxper = (int) Math.ceil((double) furnaceMap.size() / (double) checkingPeriod);
+            int delay = 1;
+            while (itr.hasNext()) {
+                Entry<Block, Map<String, Object>> entry = itr.next();
+
+                count++;
+                if (count > maxper) {
+                    count = 0;
+                    delay++;
+                }
+                Bukkit.getScheduler().runTaskLater(InteractionVisualizer.plugin, () -> {
+                    Block block = entry.getKey();
+
+                    if (!isActive(block.getLocation())) {
+                        return;
+                    }
+                    if (!isFurnace(block.getType())) {
+                        return;
+                    }
+                    org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) block.getState();
+
+                    InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
+                        Inventory inv = furnace.getInventory();
+                        ItemStack itemstack = inv.getItem(0);
+                        if (itemstack != null) {
+                            if (itemstack.getType().equals(Material.AIR)) {
+                                itemstack = null;
+                            }
+                        }
+
+                        if (itemstack == null) {
+                            itemstack = inv.getItem(2);
+                            if (itemstack != null) {
+                                if (itemstack.getType().equals(Material.AIR)) {
+                                    itemstack = null;
+                                }
+                            }
+                        }
+
+                        Item item = null;
+                        if (entry.getValue().get("Item") instanceof String) {
+                            if (itemstack != null) {
+                                item = new Item(furnace.getLocation().clone().add(0.5, 1.0, 0.5));
+                                item.setItemStack(itemstack);
+                                item.setVelocity(new Vector(0, 0, 0));
+                                item.setPickupDelay(32767);
+                                item.setGravity(false);
+                                entry.getValue().put("Item", item);
+                                PacketManager.sendItemSpawn(InteractionVisualizerAPI.getPlayerModuleList(Modules.ITEMDROP, KEY), item);
+                                PacketManager.updateItem(item);
+                            } else {
+                                entry.getValue().put("Item", "N/A");
+                            }
+                        } else {
+                            item = (Item) entry.getValue().get("Item");
+                            if (itemstack != null) {
+                                if (!item.getItemStack().equals(itemstack)) {
+                                    item.setItemStack(itemstack);
+                                    PacketManager.updateItem(item);
+                                }
+                            } else {
+                                entry.getValue().put("Item", "N/A");
+                                PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
+                            }
+                        }
+                    });
+                }, delay);
+            }
+        }, 0, checkingPeriod).getTaskId();
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onFurnace(InventoryClickEvent event) {
         if (VanishUtils.isVanished((Player) event.getWhoClicked())) {
@@ -282,10 +410,6 @@ public class FurnaceDisplay extends VisualizerRunnableDisplay implements Listene
             Item item = (Item) map.get("Item");
             PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
         }
-        if (map.get("Stand") instanceof ArmorStand) {
-            ArmorStand stand = (ArmorStand) map.get("Stand");
-            PacketManager.removeArmorStand(InteractionVisualizerAPI.getPlayers(), stand);
-        }
         furnaceMap.remove(block);
     }
 
@@ -314,43 +438,6 @@ public class FurnaceDisplay extends VisualizerRunnableDisplay implements Listene
 
     public boolean isActive(Location loc) {
         return PlayerLocationManager.hasPlayerNearby(loc);
-    }
-
-    public Map<String, ArmorStand> spawnArmorStands(Block block) {
-        Map<String, ArmorStand> map = new HashMap<>();
-        Location origin = block.getLocation();
-
-        BlockFace facing = null;
-        if (!InteractionVisualizer.version.isLegacy()) {
-            BlockData blockData = block.getState().getBlockData();
-            facing = ((Directional) blockData).getFacing();
-        } else {
-            facing = LegacyFacingUtils.getFacing(block);
-        }
-        Location target = block.getRelative(facing).getLocation();
-        Vector direction = target.toVector().subtract(origin.toVector()).multiply(0.7);
-
-        Location loc = block.getLocation().clone().add(direction).add(0.5, 0.2, 0.5);
-        ArmorStand slot1 = new ArmorStand(loc.clone());
-        setStand(slot1);
-
-        map.put("Stand", slot1);
-
-        PacketManager.sendArmorStandSpawn(InteractionVisualizerAPI.getPlayerModuleList(Modules.HOLOGRAM, KEY), slot1);
-
-        return map;
-    }
-
-    public void setStand(ArmorStand stand) {
-        stand.setBasePlate(false);
-        stand.setMarker(true);
-        stand.setGravity(false);
-        stand.setSmall(true);
-        stand.setInvulnerable(true);
-        stand.setSilent(true);
-        stand.setVisible(false);
-        stand.setCustomName("");
-        stand.setRightArmPose(EulerAngle.ZERO);
     }
 
     public boolean isFurnace(String material) {

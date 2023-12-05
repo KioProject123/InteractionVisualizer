@@ -26,29 +26,27 @@ import com.loohp.interactionvisualizer.api.InteractionVisualizerAPI.Modules;
 import com.loohp.interactionvisualizer.api.VisualizerRunnableDisplay;
 import com.loohp.interactionvisualizer.api.events.InteractionVisualizerReloadEvent;
 import com.loohp.interactionvisualizer.api.events.TileEntityRemovedEvent;
-import com.loohp.interactionvisualizer.entityholders.ArmorStand;
 import com.loohp.interactionvisualizer.entityholders.Item;
 import com.loohp.interactionvisualizer.managers.PacketManager;
 import com.loohp.interactionvisualizer.managers.PlayerLocationManager;
 import com.loohp.interactionvisualizer.managers.TileEntityManager;
 import com.loohp.interactionvisualizer.objectholders.EntryKey;
 import com.loohp.interactionvisualizer.objectholders.TileEntity.TileEntityType;
-import com.loohp.interactionvisualizer.utils.ChatColorUtils;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import com.loohp.interactionvisualizer.utils.ColorUtils;
+import com.loohp.interactionvisualizer.utils.ComponentFont;
+import com.loohp.interactionvisualizer.utils.LegacyRecordsUtils;
+import com.loohp.interactionvisualizer.utils.TranslationUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -58,32 +56,24 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Listener {
+public class JukeBoxDisplay extends VisualizerRunnableDisplay implements Listener {
 
-    public static final EntryKey KEY = new EntryKey("brewing_stand");
-    private final int max = 20 * 20;
-    public ConcurrentHashMap<Block, Map<String, Object>> brewstand = new ConcurrentHashMap<>();
+    public static final EntryKey KEY = new EntryKey("jukebox");
+
+    public ConcurrentHashMap<Block, Map<String, Object>> jukeboxMap = new ConcurrentHashMap<>();
     private int checkingPeriod = 20;
     private int gcPeriod = 600;
-    private String progressBarCharacter = "";
-    private String emptyColor = "&7";
-    private String filledColor = "&e";
-    private String noFuelColor = "&c";
-    private int progressBarLength = 10;
+    private boolean showDiscName = true;
 
-    public BrewingStandDisplay() {
+    public JukeBoxDisplay() {
         onReload(new InteractionVisualizerReloadEvent());
     }
 
     @EventHandler
     public void onReload(InteractionVisualizerReloadEvent event) {
-        checkingPeriod = InteractionVisualizer.plugin.getConfiguration().getInt("Blocks.BrewingStand.CheckingPeriod");
+        checkingPeriod = InteractionVisualizer.plugin.getConfiguration().getInt("Blocks.JukeBox.CheckingPeriod");
         gcPeriod = InteractionVisualizerAPI.getGCPeriod();
-        progressBarCharacter = ChatColorUtils.translateAlternateColorCodes('&', InteractionVisualizer.plugin.getConfiguration().getString("Blocks.BrewingStand.Options.ProgressBarCharacter"));
-        emptyColor = ChatColorUtils.translateAlternateColorCodes('&', InteractionVisualizer.plugin.getConfiguration().getString("Blocks.BrewingStand.Options.EmptyColor"));
-        filledColor = ChatColorUtils.translateAlternateColorCodes('&', InteractionVisualizer.plugin.getConfiguration().getString("Blocks.BrewingStand.Options.FilledColor"));
-        noFuelColor = ChatColorUtils.translateAlternateColorCodes('&', InteractionVisualizer.plugin.getConfiguration().getString("Blocks.BrewingStand.Options.NoFuelColor"));
-        progressBarLength = InteractionVisualizer.plugin.getConfiguration().getInt("Blocks.BrewingStand.Options.ProgressBarLength");
+        showDiscName = InteractionVisualizer.plugin.getConfiguration().getBoolean("Blocks.JukeBox.Options.ShowDiscName");
     }
 
     @Override
@@ -94,9 +84,9 @@ public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Li
     @Override
     public int gc() {
         return Bukkit.getScheduler().runTaskTimerAsynchronously(InteractionVisualizer.plugin, () -> {
-            Iterator<Entry<Block, Map<String, Object>>> itr = brewstand.entrySet().iterator();
+            Iterator<Entry<Block, Map<String, Object>>> itr = jukeboxMap.entrySet().iterator();
             int count = 0;
-            int maxper = (int) Math.ceil((double) brewstand.size() / (double) gcPeriod);
+            int maxper = (int) Math.ceil((double) jukeboxMap.size() / (double) gcPeriod);
             int delay = 1;
             while (itr.hasNext()) {
                 count++;
@@ -113,16 +103,16 @@ public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Li
                             Item item = (Item) map.get("Item");
                             PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
                         }
-                        brewstand.remove(block);
+                        jukeboxMap.remove(block);
                         return;
                     }
-                    if (!block.getType().equals(Material.BREWING_STAND)) {
+                    if (!block.getType().equals(Material.JUKEBOX)) {
                         Map<String, Object> map = entry.getValue();
                         if (map.get("Item") instanceof Item) {
                             Item item = (Item) map.get("Item");
                             PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
                         }
-                        brewstand.remove(block);
+                        jukeboxMap.remove(block);
                         return;
                     }
                 }, delay);
@@ -134,21 +124,21 @@ public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Li
     public int run() {
         return Bukkit.getScheduler().runTaskTimerAsynchronously(InteractionVisualizer.plugin, () -> {
             Bukkit.getScheduler().runTask(InteractionVisualizer.plugin, () -> {
-                Set<Block> list = nearbyBrewingStand();
+                Set<Block> list = nearbyJukeBox();
                 for (Block block : list) {
-                    if (brewstand.get(block) == null && isActive(block.getLocation())) {
-                        if (block.getType().equals(Material.BREWING_STAND)) {
-                            Map<String, Object> map = new HashMap<>();
+                    if (jukeboxMap.get(block) == null && isActive(block.getLocation())) {
+                        if (block.getType().equals(Material.JUKEBOX)) {
+                            HashMap<String, Object> map = new HashMap<>();
                             map.put("Item", "N/A");
-                            brewstand.put(block, map);
+                            jukeboxMap.put(block, map);
                         }
                     }
                 }
             });
 
-            Iterator<Entry<Block, Map<String, Object>>> itr = brewstand.entrySet().iterator();
+            Iterator<Entry<Block, Map<String, Object>>> itr = jukeboxMap.entrySet().iterator();
             int count = 0;
-            int maxper = (int) Math.ceil((double) brewstand.size() / (double) checkingPeriod);
+            int maxper = (int) Math.ceil((double) jukeboxMap.size() / (double) checkingPeriod);
             int delay = 1;
             while (itr.hasNext()) {
                 Entry<Block, Map<String, Object>> entry = itr.next();
@@ -163,24 +153,33 @@ public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Li
                     if (!isActive(block.getLocation())) {
                         return;
                     }
-                    if (!block.getType().equals(Material.BREWING_STAND)) {
+                    if (!block.getType().equals(Material.JUKEBOX)) {
                         return;
                     }
-                    org.bukkit.block.BrewingStand brewingstand = (org.bukkit.block.BrewingStand) block.getState();
+                    org.bukkit.block.Jukebox jukebox = (org.bukkit.block.Jukebox) block.getState();
 
                     InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
-                        Inventory inv = brewingstand.getInventory();
-                        ItemStack itemstack = inv.getItem(3);
-                        if (itemstack != null) {
-                            if (inv.getItem(3).getType().equals(Material.AIR)) {
-                                itemstack = null;
-                            }
-                        }
+                        ItemStack itemstack = InteractionVisualizer.version.isLegacy() ? (jukebox.getPlaying() == null ? null : (jukebox.getPlaying().equals(Material.AIR) ? null : new ItemStack(jukebox.getPlaying(), 1))) : (jukebox.getRecord() == null ? null : (jukebox.getRecord().getType().equals(Material.AIR) ? null : jukebox.getRecord().clone()));
 
-                        Item item = null;
                         if (entry.getValue().get("Item") instanceof String) {
                             if (itemstack != null) {
-                                item = new Item(brewingstand.getLocation().clone().add(0.5, 1.0, 0.5));
+                                Item item = new Item(jukebox.getLocation().clone().add(0.5, 1.0, 0.5));
+
+                                String disc = InteractionVisualizer.version.isLegacy() ? LegacyRecordsUtils.translateFromLegacy(jukebox.getPlaying().toString()) : jukebox.getPlaying().toString();
+                                Component text;
+                                if (showDiscName) {
+                                    if (itemstack.getItemMeta().hasDisplayName()) {
+                                        text = ComponentFont.parseFont(LegacyComponentSerializer.legacySection().deserialize(getColor(disc) + itemstack.getItemMeta().getDisplayName()));
+                                    } else {
+                                        text = Component.translatable(TranslationUtils.getRecord(disc));
+                                        text = text.color(ColorUtils.toTextColor(getColor(disc)));
+                                    }
+                                    item.setCustomName(text);
+                                    item.setCustomNameVisible(true);
+                                } else {
+                                    item.setCustomName("");
+                                    item.setCustomNameVisible(false);
+                                }
                                 item.setItemStack(itemstack);
                                 item.setVelocity(new Vector(0, 0, 0));
                                 item.setPickupDelay(32767);
@@ -192,14 +191,27 @@ public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Li
                                 entry.getValue().put("Item", "N/A");
                             }
                         } else {
-                            item = (Item) entry.getValue().get("Item");
+                            Item item = (Item) entry.getValue().get("Item");
                             if (itemstack != null) {
                                 if (!item.getItemStack().equals(itemstack)) {
                                     item.setItemStack(itemstack);
+                                    String disc = InteractionVisualizer.version.isLegacy() ? LegacyRecordsUtils.translateFromLegacy(jukebox.getPlaying().toString()) : jukebox.getPlaying().toString();
+                                    Component text;
+                                    if (showDiscName) {
+                                        if (itemstack.getItemMeta().hasDisplayName()) {
+                                            text = ComponentFont.parseFont(LegacyComponentSerializer.legacySection().deserialize(getColor(disc) + itemstack.getItemMeta().getDisplayName()));
+                                        } else {
+                                            text = Component.translatable(TranslationUtils.getRecord(disc));
+                                            text = text.color(ColorUtils.toTextColor(getColor(disc)));
+                                        }
+                                        item.setCustomName(text);
+                                        item.setCustomNameVisible(true);
+                                    } else {
+                                        item.setCustomName("");
+                                        item.setCustomNameVisible(false);
+                                    }
                                     PacketManager.updateItem(item);
                                 }
-                                item.setPickupDelay(32767);
-                                item.setGravity(false);
                             } else {
                                 entry.getValue().put("Item", "N/A");
                                 PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
@@ -212,111 +224,65 @@ public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Li
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onUseBrewingStand(InventoryClickEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-        if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) {
-            return;
-        }
-        if (event.getView().getTopInventory() == null) {
-            return;
-        }
-        try {
-            if (event.getView().getTopInventory().getLocation() == null) {
-                return;
-            }
-        } catch (Exception | AbstractMethodError e) {
-            return;
-        }
-        if (event.getView().getTopInventory().getLocation().getBlock() == null) {
-            return;
-        }
-        if (!event.getView().getTopInventory().getLocation().getBlock().getType().equals(Material.BREWING_STAND)) {
-            return;
-        }
-
-        if (event.getRawSlot() >= 0 && event.getRawSlot() <= 4) {
-            PacketManager.sendHandMovement(InteractionVisualizerAPI.getPlayers(), (Player) event.getWhoClicked());
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onDragBrewingStand(InventoryDragEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-        if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) {
-            return;
-        }
-        if (event.getView().getTopInventory() == null) {
-            return;
-        }
-        try {
-            if (event.getView().getTopInventory().getLocation() == null) {
-                return;
-            }
-        } catch (Exception | AbstractMethodError e) {
-            return;
-        }
-        if (event.getView().getTopInventory().getLocation().getBlock() == null) {
-            return;
-        }
-        if (!event.getView().getTopInventory().getLocation().getBlock().getType().equals(Material.BREWING_STAND)) {
-            return;
-        }
-
-        for (int slot : event.getRawSlots()) {
-            if (slot >= 0 && slot <= 4) {
-                PacketManager.sendHandMovement(InteractionVisualizerAPI.getPlayers(), (Player) event.getWhoClicked());
-                break;
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onBreakBrewingStand(TileEntityRemovedEvent event) {
+    public void onBreakJukeBox(TileEntityRemovedEvent event) {
         Block block = event.getBlock();
-        if (!brewstand.containsKey(block)) {
+        if (!jukeboxMap.containsKey(block)) {
             return;
         }
 
-        Map<String, Object> map = brewstand.get(block);
+        Map<String, Object> map = jukeboxMap.get(block);
         if (map.get("Item") instanceof Item) {
             Item item = (Item) map.get("Item");
             PacketManager.removeItem(InteractionVisualizerAPI.getPlayers(), item);
         }
-        if (map.get("Stand") instanceof ArmorStand) {
-            ArmorStand stand = (ArmorStand) map.get("Stand");
-            PacketManager.removeArmorStand(InteractionVisualizerAPI.getPlayers(), stand);
-        }
-        brewstand.remove(block);
+        jukeboxMap.remove(block);
     }
 
-    public boolean hasPotion(org.bukkit.block.BrewingStand brewingstand) {
-        Inventory inv = brewingstand.getInventory();
-        if (inv.getItem(0) != null) {
-            if (!inv.getItem(0).getType().equals(Material.AIR)) {
-                return true;
-            }
-        }
-        if (inv.getItem(1) != null) {
-            if (!inv.getItem(1).getType().equals(Material.AIR)) {
-                return true;
-            }
-        }
-        if (inv.getItem(2) != null) {
-            return !inv.getItem(2).getType().equals(Material.AIR);
-        }
-        return false;
-    }
-
-    public Set<Block> nearbyBrewingStand() {
-        return TileEntityManager.getTileEntities(TileEntityType.BREWING_STAND);
+    public Set<Block> nearbyJukeBox() {
+        return TileEntityManager.getTileEntities(TileEntityType.JUKEBOX);
     }
 
     public boolean isActive(Location loc) {
         return PlayerLocationManager.hasPlayerNearby(loc);
+    }
+
+    public ChatColor getColor(String material) {
+        switch (material) {
+            case "MUSIC_DISC_11":
+                return ChatColor.WHITE;
+            case "MUSIC_DISC_13":
+                return ChatColor.GOLD;
+            case "MUSIC_DISC_BLOCKS":
+                return ChatColor.RED;
+            case "MUSIC_DISC_CAT":
+                return ChatColor.GREEN;
+            case "MUSIC_DISC_CHIRP":
+                return ChatColor.DARK_RED;
+            case "MUSIC_DISC_FAR":
+                return ChatColor.GREEN;
+            case "MUSIC_DISC_MALL":
+                return ChatColor.BLUE;
+            case "MUSIC_DISC_MELLOHI":
+                return ChatColor.LIGHT_PURPLE;
+            case "MUSIC_DISC_STAL":
+                return ChatColor.WHITE;
+            case "MUSIC_DISC_STRAD":
+                return ChatColor.WHITE;
+            case "MUSIC_DISC_WAIT":
+                return ChatColor.AQUA;
+            case "MUSIC_DISC_WARD":
+                return ChatColor.DARK_AQUA;
+            case "MUSIC_DISC_PIGSTEP":
+                return ChatColor.GOLD;
+            case "MUSIC_DISC_OTHERSIDE":
+                return ChatColor.BLUE;
+            case "MUSIC_DISC_5":
+                return ChatColor.DARK_AQUA;
+            case "MUSIC_DISC_RELIC":
+                return ChatColor.AQUA;
+            default:
+                return ChatColor.WHITE;
+        }
     }
 
 }
