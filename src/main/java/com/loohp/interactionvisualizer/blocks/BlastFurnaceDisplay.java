@@ -181,19 +181,10 @@ public class BlastFurnaceDisplay extends VisualizerRunnableDisplay implements Li
 
                     InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
                         Inventory inv = blastfurnace.getInventory();
-                        ItemStack itemstack = inv.getItem(0);
+                        ItemStack itemstack = inv.getItem(2);
                         if (itemstack != null) {
                             if (itemstack.getType().equals(Material.AIR)) {
                                 itemstack = null;
-                            }
-                        }
-
-                        if (itemstack == null) {
-                            itemstack = inv.getItem(2);
-                            if (itemstack != null) {
-                                if (itemstack.getType().equals(Material.AIR)) {
-                                    itemstack = null;
-                                }
                             }
                         }
 

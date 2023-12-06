@@ -181,19 +181,10 @@ public class SmokerDisplay extends VisualizerRunnableDisplay implements Listener
 
                     InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
                         Inventory inv = smoker.getInventory();
-                        ItemStack itemstack = inv.getItem(0);
+                        ItemStack itemstack = inv.getItem(2);
                         if (itemstack != null) {
                             if (itemstack.getType().equals(Material.AIR)) {
                                 itemstack = null;
-                            }
-                        }
-
-                        if (itemstack == null) {
-                            itemstack = inv.getItem(2);
-                            if (itemstack != null) {
-                                if (itemstack.getType().equals(Material.AIR)) {
-                                    itemstack = null;
-                                }
                             }
                         }
 
