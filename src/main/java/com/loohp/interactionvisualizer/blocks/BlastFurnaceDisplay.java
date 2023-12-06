@@ -177,7 +177,7 @@ public class BlastFurnaceDisplay extends VisualizerRunnableDisplay implements Li
                     if (!block.getType().equals(Material.BLAST_FURNACE)) {
                         return;
                     }
-                    org.bukkit.block.BlastFurnace blastfurnace = (org.bukkit.block.BlastFurnace) block.getState();
+                    org.bukkit.block.BlastFurnace blastfurnace = (org.bukkit.block.BlastFurnace) block.getState(false);
 
                     InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
                         Inventory inv = blastfurnace.getInventory();

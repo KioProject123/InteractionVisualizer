@@ -118,7 +118,7 @@ public class DoubleChestDisplay implements Listener, VisualizerDisplay {
         Block block = topInventory.getLocation().getBlock();
         Location loc = block.getLocation();
 
-        Chest chest = (Chest) block.getState();
+        Chest chest = (Chest) block.getState(false);
         InventoryHolder holder = chest.getInventory().getHolder();
         if (!(holder instanceof DoubleChest)) {
             return;
@@ -323,7 +323,7 @@ public class DoubleChestDisplay implements Listener, VisualizerDisplay {
         Block block = topInventory.getLocation().getBlock();
         Location loc = block.getLocation();
 
-        Chest chest = (Chest) block.getState();
+        Chest chest = (Chest) block.getState(false);
         InventoryHolder holder = chest.getInventory().getHolder();
         if (!(holder instanceof DoubleChest)) {
             return;

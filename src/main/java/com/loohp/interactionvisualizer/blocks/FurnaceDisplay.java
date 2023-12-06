@@ -179,7 +179,7 @@ public class FurnaceDisplay extends VisualizerRunnableDisplay implements Listene
                     if (!isFurnace(block.getType())) {
                         return;
                     }
-                    org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) block.getState();
+                    org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) block.getState(false);
 
                     InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
                         Inventory inv = furnace.getInventory();

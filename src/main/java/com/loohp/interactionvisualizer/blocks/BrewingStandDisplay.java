@@ -166,7 +166,7 @@ public class BrewingStandDisplay extends VisualizerRunnableDisplay implements Li
                     if (!block.getType().equals(Material.BREWING_STAND)) {
                         return;
                     }
-                    org.bukkit.block.BrewingStand brewingstand = (org.bukkit.block.BrewingStand) block.getState();
+                    org.bukkit.block.BrewingStand brewingstand = (org.bukkit.block.BrewingStand) block.getState(false);
 
                     InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
                         Inventory inv = brewingstand.getInventory();

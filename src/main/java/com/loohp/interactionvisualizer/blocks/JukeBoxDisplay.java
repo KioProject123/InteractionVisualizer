@@ -156,7 +156,7 @@ public class JukeBoxDisplay extends VisualizerRunnableDisplay implements Listene
                     if (!block.getType().equals(Material.JUKEBOX)) {
                         return;
                     }
-                    org.bukkit.block.Jukebox jukebox = (org.bukkit.block.Jukebox) block.getState();
+                    org.bukkit.block.Jukebox jukebox = (org.bukkit.block.Jukebox) block.getState(false);
 
                     InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
                         ItemStack itemstack = InteractionVisualizer.version.isLegacy() ? (jukebox.getPlaying() == null ? null : (jukebox.getPlaying().equals(Material.AIR) ? null : new ItemStack(jukebox.getPlaying(), 1))) : (jukebox.getRecord() == null ? null : (jukebox.getRecord().getType().equals(Material.AIR) ? null : jukebox.getRecord().clone()));
