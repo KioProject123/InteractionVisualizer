@@ -151,7 +151,7 @@ public class PacketManager implements Listener {
                 }
             }
             try {
-                TimeUnit.MILLISECONDS.sleep(5);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException ignored) {
             }
             run();
@@ -249,7 +249,7 @@ public class PacketManager implements Listener {
                 }
             }
             try {
-                TimeUnit.MILLISECONDS.sleep(5);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException ignored) {
             }
             update();
@@ -260,10 +260,10 @@ public class PacketManager implements Listener {
         if (!plugin.isEnabled()) {
             return;
         }
-        InteractionVisualizer.asyncExecutorManager.runTaskAsynchronously(() -> {
-            Collection<Player> playersInRange = PlayerLocationManager.filterOutOfRange(players, entity);
-            ServerPacketSender.sendHandMovement(playersInRange, entity);
-        });
+        if (!InteractionVisualizer.handMovementEnabled) {
+            return;
+        }
+        entity.swingMainHand();
     }
 
     public static void sendArmorStandSpawn(Collection<Player> players, ArmorStand entity) {

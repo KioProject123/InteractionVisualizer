@@ -50,25 +50,25 @@ public class ServerPacketSender {
     private static final ProtocolManager protocolManager = InteractionVisualizer.protocolManager;
     private static final NMS nms = NMS.getInstance();
 
-    public static void sendHandMovement(Collection<Player> players, Player entity) {
-        if (!InteractionVisualizer.handMovementEnabled) {
-            return;
-        }
-
-        PacketContainer packet1 = protocolManager.createPacket(PacketType.Play.Server.ANIMATION);
-        packet1.getIntegers().write(0, entity.getEntityId());
-        packet1.getIntegers().write(1, 0);
-
-        if (!plugin.isEnabled()) {
-            return;
-        }
-
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            if (entity.isOnline()) {
-                protocolManager.sendServerPacket(entity, packet1);
-            }
-        });
-    }
+//    public static void sendHandMovement(Collection<Player> players, Player entity) {
+//        if (!InteractionVisualizer.handMovementEnabled) {
+//            return;
+//        }
+//
+//        PacketContainer packet1 = protocolManager.createPacket(PacketType.Play.Server.ANIMATION);
+//        packet1.getIntegers().write(0, entity.getEntityId());
+//        packet1.getIntegers().write(1, 0);
+//
+//        if (!plugin.isEnabled()) {
+//            return;
+//        }
+//
+//        Bukkit.getScheduler().runTask(plugin, () -> {
+//            if (entity.isOnline()) {
+//                protocolManager.sendServerPacket(entity, packet1);
+//            }
+//        });
+//    }
 
     public static void teleportEntity(Player player, int entityId, Location location) {
         PacketContainer packet1 = protocolManager.createPacket(PacketType.Play.Server.ENTITY_TELEPORT);
