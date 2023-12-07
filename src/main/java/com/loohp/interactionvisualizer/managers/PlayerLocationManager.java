@@ -94,7 +94,7 @@ public class PlayerLocationManager {
 
     public static Collection<Player> filterOutOfRange(Collection<Player> players, Location location, Predicate<Player> predicate) {
         Collection<Player> playersInRange = new HashSet<>();
-        int range = InteractionVisualizer.playerTrackingRange.getOrDefault(location.getWorld(), 64);
+        int range = InteractionVisualizer.playerTrackingRange.getOrDefault(location.getWorld(), 32);
         range *= range;
         for (Player player : players) {
             Location playerLocation = PlayerLocationManager.getPlayerLocation(player);

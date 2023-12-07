@@ -34,8 +34,8 @@ public class Events implements Listener {
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
         World world = event.getWorld();
-        int defaultRange = Bukkit.spigot().getConfig().getInt("world-settings.default.entity-tracking-range.players", 64);
-        int range = Bukkit.spigot().getConfig().getInt("world-settings." + world.getName() + ".entity-tracking-range.players", defaultRange);
+        int defaultRange = Bukkit.spigot().getConfig().getInt("world-settings.default.entity-tracking-range.misc", 32);
+        int range = Bukkit.spigot().getConfig().getInt("world-settings." + world.getName() + ".entity-tracking-range.misc", defaultRange);
         InteractionVisualizer.playerTrackingRange.put(world, range);
         for (Entity entity : world.getNearbyEntities(new Location(event.getWorld(), 0, 0, 0), 2, 2, 2)) {
             if (entity.getScoreboardTags().contains("isInteractionVisualizer")) {

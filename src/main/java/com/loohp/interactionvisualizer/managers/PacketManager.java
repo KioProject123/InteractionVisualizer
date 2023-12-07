@@ -205,7 +205,7 @@ public class PacketManager implements Listener {
                         Location playerEyeLocation = PlayerLocationManager.getPlayerEyeLocation(player);
                         for (Entry<VisualizerEntity, Collection<Player>> entry : active.entrySet()) {
                             VisualizerEntity entity = entry.getKey();
-                            int range = InteractionVisualizer.playerTrackingRange.getOrDefault(entity.getWorld(), 64);
+                            int range = InteractionVisualizer.playerTrackingRange.getOrDefault(entity.getWorld(), 32);
                             range *= range;
 
                             boolean playerActive = activeList.contains(entity);

@@ -415,9 +415,9 @@ public class InteractionVisualizer extends JavaPlugin {
         language = getConfiguration().getString("Settings.Language");
 
         playerTrackingRange.clear();
-        int defaultRange = getServer().spigot().getConfig().getInt("world-settings.default.entity-tracking-range.players", 64);
+        int defaultRange = getServer().spigot().getConfig().getInt("world-settings.default.entity-tracking-range.misc", 32);
         for (World world : getServer().getWorlds()) {
-            int range = getServer().spigot().getConfig().getInt("world-settings." + world.getName() + ".entity-tracking-range.players", defaultRange);
+            int range = getServer().spigot().getConfig().getInt("world-settings." + world.getName() + ".entity-tracking-range.misc", defaultRange);
             playerTrackingRange.put(world, range);
         }
 
