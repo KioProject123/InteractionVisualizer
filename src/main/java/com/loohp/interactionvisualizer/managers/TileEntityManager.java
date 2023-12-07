@@ -194,10 +194,10 @@ public class TileEntityManager implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent event) {
-        if (event.getVehicle().getPassengers().stream().anyMatch(each -> each instanceof Player)) {
-            Location from = event.getFrom();
-            Location to = event.getTo();
-            if (!from.getWorld().equals(to.getWorld()) || ((from.getBlockX() >> 4 != to.getBlockX() >> 4 || from.getBlockZ() >> 4 != to.getBlockZ() >> 4) && !isMovingTooFast(null, from, to))) {
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if (!from.getWorld().equals(to.getWorld()) || ((from.getBlockX() >> 4 != to.getBlockX() >> 4 || from.getBlockZ() >> 4 != to.getBlockZ() >> 4) && !isMovingTooFast(null, from, to))) {
+            if (event.getVehicle().getPassengers().stream().anyMatch(each -> each instanceof Player)) {
                 addTileEntities(getAllChunks(to));
             }
         }
