@@ -186,6 +186,19 @@ public class EnchantmentTableDisplay extends VisualizerInteractDisplay implement
             return;
         }
         Block block = event.getEnchantBlock();
+
+        // KioCG start - 修复虚拟物品显示
+        if (!InteractionVisualizer.version.isLegacy()) {
+            if (!block.getType().toString().equalsIgnoreCase("ENCHANTING_TABLE")) {
+                return;
+            }
+        } else {
+            if (!block.getType().toString().equalsIgnoreCase("ENCHANTMENT_TABLE")) {
+                return;
+            }
+        }
+        // KioCG end - 修复虚拟物品显示
+
         Player player = event.getEnchanter();
 
         Bukkit.getScheduler().runTaskLater(InteractionVisualizer.plugin, () -> {
