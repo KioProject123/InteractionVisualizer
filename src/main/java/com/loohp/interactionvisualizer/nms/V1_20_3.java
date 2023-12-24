@@ -36,7 +36,6 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.item.EntityItem;
-import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
 import net.minecraft.world.level.entity.PersistentEntitySectionManager;
 import net.minecraft.world.phys.AxisAlignedBB;
@@ -44,10 +43,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftItem;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftItem;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.EquipmentSlot;
@@ -62,7 +61,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class V1_20_2 extends NMS {
+public class V1_20_3 extends NMS {
 
     private static Method voxelShapeGetAABBList;
     private static Method nmsTileEntityGetNBTTag;
@@ -71,7 +70,6 @@ public class V1_20_2 extends NMS {
     private static Method nmsEntityIterable;
     private static Method nmsEntityGetBukkitEntity;
     private static Method nmsGetTileEntitesMethod;
-    private static Method nmsTileEntityGetIBlockData;
 
     static {
         try {
@@ -80,7 +78,7 @@ public class V1_20_2 extends NMS {
             } catch (NoSuchMethodException | SecurityException e) {
                 voxelShapeGetAABBList = VoxelShape.class.getMethod("toList");
             }
-            nmsTileEntityGetNBTTag = net.minecraft.world.level.block.entity.TileEntity.class.getMethod("as_");
+            nmsTileEntityGetNBTTag = net.minecraft.world.level.block.entity.TileEntity.class.getMethod("ax_");
             try {
                 nmsPersistentEntitySectionManager = WorldServer.class.getField("M");
             } catch (NoSuchFieldException e) {
@@ -89,7 +87,6 @@ public class V1_20_2 extends NMS {
             }
             nmsEntityGetBukkitEntity = net.minecraft.world.entity.Entity.class.getMethod("getBukkitEntity");
             nmsGetTileEntitesMethod = Chunk.class.getMethod("G");
-            nmsTileEntityGetIBlockData = net.minecraft.world.level.block.entity.TileEntity.class.getMethod("q");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,15 +117,11 @@ public class V1_20_2 extends NMS {
         try {
             return new NMSTileEntitySet<net.minecraft.core.BlockPosition, net.minecraft.world.level.block.entity.TileEntity>((Map<net.minecraft.core.BlockPosition, net.minecraft.world.level.block.entity.TileEntity>) nmsGetTileEntitesMethod.invoke(nmsChunk), entry -> {
                 net.minecraft.core.BlockPosition pos = entry.getKey();
-                try {
-                    Material type = CraftMagicNumbers.getMaterial(((IBlockData) nmsTileEntityGetIBlockData.invoke(entry.getValue())).b());
-                    TileEntityType tileEntityType = TileEntity.getTileEntityType(type);
-                    if (tileEntityType != null) {
-                        return new TileEntity(world, pos.u(), pos.v(), pos.w(), tileEntityType);
-                    } else {
-                        return null;
-                    }
-                } catch (Exception e) {
+                Material type = CraftMagicNumbers.getMaterial(entry.getValue().r().b());
+                TileEntityType tileEntityType = TileEntity.getTileEntityType(type);
+                if (tileEntityType != null) {
+                    return new TileEntity(world, pos.u(), pos.v(), pos.w(), tileEntityType);
+                } else {
                     return null;
                 }
             });
